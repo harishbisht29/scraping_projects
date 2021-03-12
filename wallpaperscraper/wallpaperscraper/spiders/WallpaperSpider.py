@@ -4,7 +4,12 @@ import scrapy
 class WallpaperspiderSpider(scrapy.Spider):
     name = 'WallpaperSpider'
     allowed_domains = ['wall.alphacoders.com']
-    start_urls = ['http://wall.alphacoders.com/search.php?search=breaking+bad/']
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.start_urls= [f'http://wall.alphacoders.com/search.php?search={self.text}']
+        
+
     page_num= 1
     def parse(self, response):
         # Get Img tags
@@ -19,6 +24,6 @@ class WallpaperspiderSpider(scrapy.Spider):
         for i in img_urls:
             yield { 'urls':i }
         self.page_num= self.page_num+1
-        next_page_url= "https://wall.alphacoders.com/search.php?search=breaking+bad&page="+ str(self.page_num)
+        next_page_url= f"https://wall.alphacoders.com/search.php?search={self.text}&page="+ str(self.page_num)
 
         yield response.follow(next_page_url ,callback=self.parse)
